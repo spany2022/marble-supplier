@@ -1,0 +1,318 @@
+@import "tailwindcss";
+
+/* ───────────── Design tokens ───────────── */
+@theme {
+  --color-ivory: #f6f3ee;
+  --color-marble: #fffefc;
+  --color-charcoal: #1c1c1b;
+  --color-stone: #343532;
+  --color-slate: #777873;
+  /* Darker slate for body copy on light grounds (≥ 4.5:1 on ivory). */
+  --color-slate-ink: #5b5c57;
+  --color-travertine: #d8c7ad;
+  --color-sand: #b7a38a;
+  --color-brass: #a88a58;
+  /* Deeper brass for small text / fills on light grounds (≥ 4.5:1 on ivory and with ivory text). */
+  --color-brass-deep: #7a6136;
+  --color-line: rgb(28 28 27 / 0.14);
+  --color-line-light: rgb(246 243 238 / 0.16);
+
+  --font-display: var(--font-manrope), "Arial Black", system-ui, sans-serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --container-site: 90rem;
+}
+
+/* ───────────── Type scale: bold, compact, uppercase ───────────── */
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+  font-size: clamp(3.1rem, 10.2vw, 11rem);
+}
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  font-size: clamp(2.5rem, 6.6vw, 7rem);
+}
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  font-size: clamp(2rem, 4.4vw, 4.5rem);
+}
+@utility display-sm {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-size: clamp(1.35rem, 2.1vw, 2rem);
+}
+/* Editorial serif italic accent, sized to sit inside bold uppercase headlines. */
+@utility serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: 1.12em;
+  line-height: 0.8;
+}
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+@utility lede {
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  line-height: 1.6;
+}
+@utility num-outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+}
+@utility section-pad {
+  padding-block: clamp(5rem, 11vw, 10rem);
+}
+@utility site-x {
+  padding-inline: clamp(1rem, 4vw, 3.5rem);
+}
+
+/* ───────────── Base ───────────── */
+@layer base {
+  html {
+    background: var(--color-ivory);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-marble);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 3px;
+  }
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+  button,
+  [role="button"],
+  [role="tab"],
+  summary,
+  select {
+    cursor: pointer;
+  }
+}
+
+/* Lenis smooth scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Pre-hydration states for the hero reveal, with a safety net if JS never runs. */
+.js [data-hero-line] > span {
+  transform: translateY(110%);
+  animation: reveal-fallback 0s linear 4s forwards;
+}
+.js [data-hero-fade] {
+  opacity: 0;
+  animation: reveal-fallback 0s linear 4s forwards;
+}
+@keyframes reveal-fallback {
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Light gliding across polished stone */
+.light-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.light-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgb(255 254 252 / 0.08) 47%,
+    rgb(255 254 252 / 0.24) 50%,
+    rgb(255 254 252 / 0.08) 53%,
+    transparent 60%
+  );
+  transform: translateX(-60%);
+  animation: sweep 8s var(--ease-in-out-quart) 2.4s infinite;
+  mix-blend-mode: soft-light;
+}
+@keyframes sweep {
+  0% {
+    transform: translateX(-60%);
+  }
+  50%,
+  100% {
+    transform: translateX(60%);
+  }
+}
+
+/* Scroll cue */
+.scroll-cue {
+  animation: cue 2.2s var(--ease-in-out-quart) infinite;
+  transform-origin: top;
+}
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+/* Subtle stone grain for dark sections */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Animated hairline borders for feature blocks */
+.draw-border {
+  position: relative;
+}
+.draw-border::before,
+.draw-border::after {
+  content: "";
+  position: absolute;
+  background: var(--color-brass);
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.draw-border::before {
+  left: 0;
+  top: 0;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.draw-border::after {
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+.draw-border:hover::before,
+.draw-border:focus-within::before {
+  transform: scaleX(1);
+}
+.draw-border:hover::after,
+.draw-border:focus-within::after {
+  transform: scaleY(1);
+}
+
+/* Skeleton shimmer for loading states */
+.skeleton {
+  background: linear-gradient(90deg, rgb(28 28 27 / 0.06) 25%, rgb(28 28 27 / 0.12) 50%, rgb(28 28 27 / 0.06) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+dialog.lightbox::backdrop {
+  background: rgb(20 20 19 / 0.95);
+}
+
+/* Native select arrow replacement */
+.select-arrow {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%231C1C1B' stroke-width='1.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-hero-line] > span,
+  .js [data-hero-fade] {
+    transform: none;
+    opacity: 1;
+    animation: none;
+  }
+  .light-sweep::after,
+  .scroll-cue {
+    animation: none;
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
